@@ -1,0 +1,28 @@
+name: china_city
+description: 中国城市风貌与人文生活
+
+script:
+  tone: "awe-inspiring, poetic, reflective"
+  structure: "hook → city_overview → daily_life → night_scene → reflection"
+  forbidden_words: ["communist", "political", "controversial"]
+  preferred_words: ["modern", "harmonious", "vibrant", "bustling", "historic"]
+
+visuals:
+  style: "wide cinematic shots, cityscape, time-lapse, drone views"
+  shot_types: ["aerial", "wide establishing", "street level", "night scene"]
+  color_mood: "vibrant, dynamic, contrast between neon and natural light"
+  avoid: ["political imagery", "empty streets", "overcast grey"]
+
+narration:
+  voice: "en-US-JennyNeural"
+  pace: "moderate, 140 wpm"
+  energy: "inspiring and warm"
+
+music:
+  mood: "uplifting, modern, cinematic"
+  energy: "medium"
+  genre: "electronic-orchestral, ambient"
+
+subtitle:
+  en_style: "white, bottom center, FontSize=18"
+  zh_style: "yellow, above EN sub, FontSize=14"

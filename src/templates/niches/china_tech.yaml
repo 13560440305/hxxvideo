@@ -1,0 +1,28 @@
+name: china_tech
+description: 中国科技与制造业创新
+
+script:
+  tone: "impressive, forward-looking, precise"
+  structure: "hook → problem → innovation → impact → future_outlook"
+  forbidden_words: ["copycat", "cheap", "knockoff", "low-quality"]
+  preferred_words: ["innovative", "cutting-edge", "leading", "breakthrough", "efficient"]
+
+visuals:
+  style: "clean, high-contrast, modern, tech-focused"
+  shot_types: ["wide factory floor", "close-up machinery", "product showcase", "team collaboration"]
+  color_mood: "cool blues and silvers, with accent orange/red for energy"
+  avoid: ["grainy footage", "outdated equipment", "unsafe work environments"]
+
+narration:
+  voice: "en-US-GuyNeural"
+  pace: "crisp, 150 wpm"
+  energy: "confident and dynamic"
+
+music:
+  mood: "energetic, modern, innovative"
+  energy: "medium-high"
+  genre: "electronic, synthwave, cinematic percussion"
+
+subtitle:
+  en_style: "white, bottom center, FontSize=18"
+  zh_style: "yellow, above EN sub, FontSize=14"

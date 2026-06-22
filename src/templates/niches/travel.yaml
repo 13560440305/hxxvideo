@@ -1,0 +1,28 @@
+name: travel
+description: 中国旅游目的地与自然风光
+
+script:
+  tone: "adventurous, serene, immersive"
+  structure: "hook → landscape_intro → journey → hidden_gems → farewell"
+  forbidden_words: ["overrated", "tourist trap", "crowded"]
+  preferred_words: ["breathtaking", "serene", "hidden", "timeless", "majestic", "unforgettable"]
+
+visuals:
+  style: "epic natural landscapes, golden hour, slow motion, drone"
+  shot_types: ["aerial landscape", "wide panoramic", "close-up nature", "traveler POV"]
+  color_mood: "natural vibrant, sunrise/sunset golden, misty morning blues"
+  avoid: ["over-saturated filters", "urban sprawl (unless context)", "bad weather footage"]
+
+narration:
+  voice: "en-US-MichelleNeural"
+  pace: "relaxed, 120 wpm"
+  energy: "calm and wonder-filled"
+
+music:
+  mood: "peaceful, awe-inspiring, cinematic"
+  energy: "low to medium"
+  genre: "orchestral, ambient, nature soundscape"
+
+subtitle:
+  en_style: "white, bottom center, FontSize=18"
+  zh_style: "yellow, above EN sub, FontSize=14"

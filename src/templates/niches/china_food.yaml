@@ -1,0 +1,28 @@
+name: china_food
+description: 中国街头美食与餐饮文化
+
+script:
+  tone: "warm, authentic, curious"
+  structure: "hook → origin_story → process → taste → culture_context"
+  forbidden_words: ["exotic", "weird", "strange"]
+  preferred_words: ["flavorful", "traditional", "crafted", "generations"]
+
+visuals:
+  style: "cinematic, warm color grade, shallow depth of field"
+  shot_types: ["close-up food", "hands cooking", "street atmosphere", "customer reactions"]
+  color_mood: "warm orange and golden tones"
+  avoid: ["dirty", "crowded chaos", "negative stereotypes"]
+
+narration:
+  voice: "en-US-AndrewNeural"
+  pace: "relaxed, 130 wpm"
+  energy: "warm and inviting"
+
+music:
+  mood: "light, curious, world music influenced"
+  energy: "medium-low"
+  genre: "acoustic, subtle percussion"
+
+subtitle:
+  en_style: "white, bottom center, FontSize=18"
+  zh_style: "yellow, above EN sub, FontSize=14"

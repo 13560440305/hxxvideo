@@ -1,0 +1,62 @@
+# =============================================================================
+# StarVoyage AI Video Engine — Configuration
+# =============================================================================
+# Copy this file to config.yaml (or set STARVOYAGE_CONFIG env var to its path).
+# Sensitive fields can be overridden via environment variables:
+#   OPENROUTER_API_KEY, SILICONFLOW_API_KEY
+# =============================================================================
+
+# ── PostgreSQL + pgvector ──────────────────────────────────────────────────────
+postgres:
+  host: 127.0.0.1
+  port: 5432
+  database: starvoyage
+  user: postgres
+  password: ""
+  min_conn: 2
+  max_conn: 10
+
+# ── Redis (task queue / caching) ───────────────────────────────────────────────
+redis:
+  host: 127.0.0.1
+  port: 6379
+  db: 0
+  password: ""
+
+# ── OpenRouter (LLM API) ───────────────────────────────────────────────────────
+openrouter:
+  api_key: ""                                     # or set OPENROUTER_API_KEY env
+  base_url: "https://openrouter.ai/api/v1"
+  script_model: "deepseek/deepseek-chat-v3-0324"
+  storyboard_model: "deepseek/deepseek-chat-v3-0324"
+  max_tokens: 8192
+  temperature: 0.7
+
+# ── SiliconFlow (Image / Video generation) ─────────────────────────────────────
+siliconflow:
+  api_key: ""                                     # or set SILICONFLOW_API_KEY env
+  base_url: "https://api.siliconflow.cn/v1"
+  video_model: "Wan-AI/Wan2.2-T2V-A14B"
+  image_model: "black-forest-labs/FLUX.1-dev"
+  image_size: "1280x720"
+  num_frames: 120                                 # 5s @ 24fps
+
+# ── Edge TTS ───────────────────────────────────────────────────────────────────
+edge_tts:
+  voice: "en-US-AndrewNeural"
+  rate: "-5%"
+  volume: "+10%"
+
+# ── File paths (relative to project root — config.yaml is in src/config/) ────
+paths:
+  output_dir: output
+  music_dir: assets/music
+  fonts_dir: assets/fonts
+  watermark_dir: assets/watermark
+  template_dir: src/templates
+  ffmpeg_path: "C:/hxxwww/tools/ffmpeg/win/bin/ffmpeg.exe"  # 留空则用 PATH 中的 ffmpeg
+
+# ── Pipeline defaults ──────────────────────────────────────────────────────────
+log_level: INFO
+max_scenes: 12
+default_scene_duration: 15

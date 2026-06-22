@@ -1,0 +1,27 @@
+# =============================================================================
+# StarVoyage AI Video Engine — Python Dependencies
+# =============================================================================
+# Install:  pip install -r requirements.txt
+# =============================================================================
+
+# ── Core ──────────────────────────────────────────────────────────────────────
+pyyaml>=6.0
+requests>=2.31.0
+psycopg2-binary>=2.9.9
+redis>=5.0.0
+
+# ── TTS ───────────────────────────────────────────────────────────────────────
+edge-tts>=6.1.0
+
+# ── Third-party video frameworks ──────────────────────────────────────────────
+# 有两种方式引入 ShortGPT 和 OpenMontage：
+#
+# 方式 A（推荐 — 全局 site-packages）：
+#   pip install git+https://github.com/RayVentura/ShortGPT.git
+#   pip install git+https://github.com/calesthio/OpenMontage.git
+#
+# 方式 B（源码目录内 vendoring — 见 scripts/setup-vendor.bat）：
+#   运行 scripts/setup-vendor.bat，将仓库克隆到 vendor/ 目录，
+#   src/__init__.py 会自动将 vendor/ 加入 Python 模块搜索路径，
+#   无需 pip install 到全局。
+# =============================================================================
