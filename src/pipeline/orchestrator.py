@@ -217,13 +217,22 @@ class PipelineOrchestrator:
                     output_path=str(project_dir / "final.mp4"),
                     subtitle_en=result.get("subtitles", {}).get("srt_en"),
                     subtitle_zh=result.get("subtitles", {}).get("srt_zh"),
-                    bg_music_path=bg_music,
+                    bg_music_path=bg_music or self._auto_match_music(niche),
                 )
                 result["video_path"] = str(output_video)
 
                 # Quality check (Phase 2)
                 quality = self.composer.check_quality(str(output_video))
                 result["quality"] = quality
+
+                # Cover image (Phase 2)
+                try:
+                    script_title = result.get("script", {}).get("title", topic)
+                    cover_path = self.asset_agent.generate_cover(script_title, niche)
+                    result["cover_path"] = cover_path
+                    logger.info("Cover image generated → %s", cover_path)
+                except Exception as exc:
+                    logger.warning("Cover generation skipped (non‑fatal): %s", exc)
 
                 if project_id:
                     db.update_project_status(project_id, "done", output_path=str(output_video))
@@ -273,6 +282,32 @@ class PipelineOrchestrator:
             "script": script,
             "storyboard": storyboard,
         }
+
+    # ── background music auto‑match (Phase 2) ─────────────────────────
+
+    def _auto_match_music(self, niche: str) -> Optional[str]:
+        """
+        Scan ``assets/music/`` and try to find a track matching *niche*.
+
+        Matching priority:
+          1. File with niche name in the filename (e.g. ``china_food_acoustic.mp3``)
+          2. Any .mp3 / .wav file in the music directory
+        Returns ``None`` if nothing found.
+        """
+        music_dir = Path(self._cfg.paths.music_dir)
+        if not music_dir.is_dir():
+            return None
+
+        files = sorted(music_dir.glob("*"))
+        if not files:
+            return None
+
+        # Prefer file matching the niche name
+        niche_files = [f for f in files if niche.replace("_", "") in f.stem.lower().replace("_", "")]
+        target = niche_files[0] if niche_files else files[0]
+
+        logger.info("Auto‑matched music: %s (niche=%s)", target.name, niche)
+        return str(target)
 
     # ── placeholder clips ───────────────────────────────────────────────
 
