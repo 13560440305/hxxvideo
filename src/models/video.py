@@ -31,7 +31,8 @@ class VideoClient:
         self.base_url = sc.base_url.rstrip("/")
         self.video_model = sc.video_model
         self.image_model = sc.image_model
-        self.image_size = sc.image_size
+        # 使用 resolution 配置来确定画面尺寸
+        self.image_size = f"{cfg.resolution.width}x{cfg.resolution.height}"
         self.num_frames = sc.num_frames
         self._session = requests.Session()
         self._session.headers.update(

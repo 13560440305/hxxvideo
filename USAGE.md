@@ -151,6 +151,14 @@ paths:
   watermark_dir: assets/watermark # 水印目录
   template_dir: src/templates    # 模板目录
 
+# ── 画面分辨率 ──
+resolution:
+  width: 1280                 # 输出视频宽度（像素），1920=1080p, 1280=720p, 854=480p
+  height: 720                 # 输出视频高度（像素），1080=1080p, 720=720p, 480=480p
+  fps: 24                     # 帧率
+  # CLI 可用 --resolution 1080p / 720p / 480p / short(9:16) / square(1:1)
+  # 也可用 --format shorts 自动切为竖屏 1080×1920
+
 # ── 流水线参数 ──
 log_level: INFO                  # 日志级别
 max_scenes: 12                   # 最大场景数
@@ -218,6 +226,7 @@ python -m src run \
   [--niche <模板名>] \
   [--duration <秒数>] \
   [--format youtube|shorts] \
+  [--resolution <预设|WxH>] \
   [--output-dir <路径>] \
   [--bg-music <路径>] \
   [--skip-video]
@@ -229,6 +238,7 @@ python -m src run \
 | `--niche` | 可选 | `general` | 内容主题模板，参见 `list-niches` |
 | `--duration` | 可选 | `180` | 目标视频时长（秒），youtube 格式推荐 180-600，shorts 推荐 15-60 |
 | `--format` | 可选 | `youtube` | 视频格式，`youtube`=横屏 16:9，`shorts`=竖屏 9:16 |
+| `--resolution` | 可选 | config 设定 | 画面分辨率，见下方分辨率说明 |
 | `--output-dir` | 可选 | config 中配置 | 自定义输出目录 |
 | `--bg-music` | 可选 | 无 | 背景音乐文件路径（mp3/wav） |
 | `--skip-video` | 可选 | `false` | 跳过视频合成（只生成脚本+配音+字幕） |
@@ -285,6 +295,25 @@ python -m src run \
   --niche travel \
   --duration 120 \
   --skip-video
+
+# 指定分辨率输出
+python -m src run \
+  --topic "成都火锅" \
+  --niche china_food \
+  --duration 30 \
+  --resolution 1080p           # 1920×1080 全高清横屏
+
+python -m src run \
+  --topic "上海外滩" \
+  --niche china_city \
+  --duration 30 \
+  --format shorts               # 1080×1920 竖屏（等价于 --resolution short）
+
+python -m src run \
+  --topic "广州塔" \
+  --niche china_city \
+  --duration 10 \
+  --resolution square           # 1080×1080 方形
 ```
 
 **输出示意：**
@@ -775,6 +804,51 @@ output/
 | 视频编码 | H.264 | H.264 |
 | 音频编码 | AAC, 192kbps+ | AAC, 128kbps+ |
 | 目标时长 | 180-600s | 15-60s |
+
+---
+
+### 7.4 画面分辨率设置
+
+支持多种分辨率预设和自定义尺寸，通过 `--resolution` 参数或 `config.yaml` 的 `resolution` 段控制。
+
+**分辨率预设：**
+
+| 预设名 | 尺寸 | 比例 | 适用场景 |
+|--------|------|------|---------|
+| `1080p` | 1920×1080 | 16:9 横屏 | 全高清 YouTube 视频 |
+| `720p` | 1280×720 | 16:9 横屏 | 默认，平衡质量与性能 |
+| `480p` | 854×480 | 16:9 横屏 | 低分辨率测试，节省 API 费用 |
+| `short` | 1080×1920 | 9:16 竖屏 | YouTube Shorts / TikTok |
+| `square` | 1080×1080 | 1:1 方形 | Instagram / 社交媒体 |
+
+**使用方式（优先级从高到低）：**
+
+1. **CLI 参数** `--resolution`：`--resolution 1080p` 或 `--resolution 1920x1080`
+2. **格式缩写** `--format shorts`：自动切换为竖屏 1080×1920
+3. **配置文件** `config.yaml`：`resolution.width` / `resolution.height`
+
+**示例：**
+
+```bash
+# 1080p 横屏（最常用）
+python -m src run --topic "..." --resolution 1080p --duration 60
+
+# 竖屏短视频
+python -m src run --topic "..." --format shorts --duration 30
+
+# 自定义尺寸
+python -m src run --topic "..." --resolution 1440x1080 --duration 30
+
+# 修改默认分辨率（编辑 config.yaml）
+#   resolution:
+#     width: 1920
+#     height: 1080
+```
+
+**注意事项：**
+- 更改分辨率不影响 SiliconFlow 计费（按视频条数计费，非按时长/分辨率）
+- 输出视频会自动缩放 + 黑边填充到你指定的分辨率
+- 帧率固定为 24fps（可在 config.yaml 中修改）
 
 ---
 

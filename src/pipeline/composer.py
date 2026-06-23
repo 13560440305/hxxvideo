@@ -35,6 +35,9 @@ class Composer:
         self._ffmpeg = cfg.paths.ffmpeg_path or "ffmpeg"
         self._ffprobe = cfg.paths.ffmpeg_path.replace("ffmpeg.exe", "ffprobe.exe") \
             if "ffmpeg.exe" in cfg.paths.ffmpeg_path else "ffprobe"
+        self._target_w = cfg.resolution.width
+        self._target_h = cfg.resolution.height
+        self._target_fps = cfg.resolution.fps
 
     # ── public API ─────────────────────────────────────────────────────
 
@@ -107,18 +110,17 @@ class Composer:
         list_path.unlink(missing_ok=True)
 
     def _normalise(self, input_path: Path, output_path: Path) -> None:
-        """Scale to target resolution and set constant frame rate."""
-        scale = (
-            f"scale={TARGET_WIDTH}:{TARGET_HEIGHT}:"
-            f"force_original_aspect_ratio=decrease,"
-            f"pad={TARGET_WIDTH}:{TARGET_HEIGHT}:"
-            f"(ow-iw)/2:(oh-ih)/2"
+        """Scale + crop to fill target resolution (cover mode, no black bars)."""
+        vf = (
+            f"scale={self._target_w}:{self._target_h}:"
+            f"force_original_aspect_ratio=increase,"
+            f"crop={self._target_w}:{self._target_h}"
         )
         self._run([
             self._ffmpeg, "-y",
             "-i", str(input_path),
-            "-vf", scale,
-            "-r", str(TARGET_FPS),
+            "-vf", vf,
+            "-r", str(self._target_fps),
             "-c:v", "libx264",
             "-preset", "fast",
             "-crf", "23",

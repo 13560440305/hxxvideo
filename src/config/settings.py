@@ -111,6 +111,45 @@ class PathsConfig:
     ffmpeg_path: str = ""  # custom path to ffmpeg.exe (Windows)
 
 
+# ── 分辨率预设 ────────────────────────────────────────────────────────────
+RESOLUTION_PRESETS = {
+    "1080p": (1920, 1080),
+    "720p":  (1280, 720),
+    "480p":  (854, 480),
+    "360p":  (640, 360),
+    "short": (1080, 1920),   # 9:16 竖屏
+    "square": (1080, 1080),  # 1:1 方形
+}
+
+
+def parse_resolution(value: str) -> tuple[int, int]:
+    """解析分辨率，支持预设名或 WxH 格式。"""
+    if value in RESOLUTION_PRESETS:
+        return RESOLUTION_PRESETS[value]
+    if "x" in value.lower():
+        parts = value.lower().split("x")
+        return int(parts[0]), int(parts[1])
+    raise ValueError(
+        f"Unknown resolution: {value}. "
+        f"Use preset {list(RESOLUTION_PRESETS.keys())} or WxH."
+    )
+
+
+@dataclass
+class ResolutionConfig:
+    width: int = 1280
+    height: int = 720
+    fps: int = 24
+
+    @property
+    def preset(self) -> str:
+        """返回最近的预设名，方便传给 SiliconFlow 等外部 API。"""
+        for name, (w, h) in RESOLUTION_PRESETS.items():
+            if (w, h) == (self.width, self.height):
+                return name
+        return f"{self.width}x{self.height}"
+
+
 @dataclass
 class Config:
     postgres: PostgresConfig = field(default_factory=PostgresConfig)
@@ -119,6 +158,7 @@ class Config:
     siliconflow: SiliconFlowConfig = field(default_factory=SiliconFlowConfig)
     edge_tts: EdgeTTSConfig = field(default_factory=EdgeTTSConfig)
     paths: PathsConfig = field(default_factory=PathsConfig)
+    resolution: ResolutionConfig = field(default_factory=ResolutionConfig)
     log_level: str = "INFO"
     max_scenes: int = 12
     default_scene_duration: int = 15
@@ -215,6 +255,20 @@ def load_config(config_path: Optional[str] = None) -> Config:
     cfg.paths.watermark_dir = str(base / pt.get("watermark_dir", cfg.paths.watermark_dir))
     cfg.paths.template_dir = str(base / pt.get("template_dir", "templates"))
     cfg.paths.ffmpeg_path = pt.get("ffmpeg_path", "")  # absolute path, not relative to base
+
+    # ── resolution ─────────────────────────────────────────────────────
+    res = raw.get("resolution", {})
+    cfg.resolution.width = res.get("width", cfg.resolution.width)
+    cfg.resolution.height = res.get("height", cfg.resolution.height)
+    cfg.resolution.fps = res.get("fps", cfg.resolution.fps)
+
+    # 兼容旧版 image_size 覆盖
+    if "image_size" in raw.get("siliconflow", {}):
+        si = raw["siliconflow"]["image_size"]
+        if si and "x" in si:
+            w, h = si.split("x")
+            cfg.resolution.width = int(w)
+            cfg.resolution.height = int(h)
 
     # ── misc ──────────────────────────────────────────────────────────
     cfg.log_level = raw.get("log_level", cfg.log_level)

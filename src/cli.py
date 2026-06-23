@@ -18,7 +18,7 @@ import sys
 from pathlib import Path
 from typing import Any, Optional
 
-from src.config.settings import Config, load_config
+from src.config.settings import Config, load_config, parse_resolution
 from src.db.postgres import DatabaseManager
 from src.db.redis_client import RedisClient
 from src.pipeline.orchestrator import PipelineOrchestrator
@@ -62,7 +62,10 @@ def build_parser() -> argparse.ArgumentParser:
     run_p.add_argument("--topic", required=True, help="Video topic (Chinese)")
     run_p.add_argument("--niche", default="general", help="Content niche template name")
     run_p.add_argument("--duration", type=int, default=180, help="Target video duration in seconds")
-    run_p.add_argument("--format", default="youtube", choices=["youtube", "shorts"], help="Video format")
+    run_p.add_argument("--format", default="youtube", choices=["youtube", "shorts"], help="Video format (影响分辨率和比例)")
+    run_p.add_argument("--resolution", default=None,
+                       help="画面分辨率: 预设名(720p/1080p/short/square) 或 WxH(1920x1080). "
+                            "默认 720p(16:9), --format shorts 自动切为 9:16")
     run_p.add_argument("--output-dir", default=None, help="Custom output directory")
     run_p.add_argument("--bg-music", default=None, help="Path to background music file")
     run_p.add_argument("--skip-video", action="store_true", help="Skip final video composition (draft mode)")
@@ -102,6 +105,17 @@ def build_parser() -> argparse.ArgumentParser:
 
 def cmd_run(args: argparse.Namespace, cfg: Config, orch: PipelineOrchestrator) -> dict:
     """Execute the full pipeline."""
+    # 处理分辨率
+    if args.resolution:
+        w, h = parse_resolution(args.resolution)
+    elif args.format == "shorts":
+        w, h = 1080, 1920  # 9:16 竖屏
+    else:
+        w, h = cfg.resolution.width, cfg.resolution.height
+
+    cfg.resolution.width = w
+    cfg.resolution.height = h
+
     return orch.run(
         topic=args.topic,
         niche=args.niche,

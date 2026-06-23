@@ -54,7 +54,15 @@ paths:
   fonts_dir: assets/fonts
   watermark_dir: assets/watermark
   template_dir: src/templates
-  ffmpeg_path: "C:/hxxwww/tools/ffmpeg/win/bin/ffmpeg.exe"  # 留空则用 PATH 中的 ffmpeg
+  ffmpeg_path: ""  # 设置 FFmpeg 路径（如 C:/tools/ffmpeg/bin/ffmpeg.exe），留空则用 PATH
+
+# ── 画面分辨率 ─────────────────────────────────────────────────────────────
+resolution:
+  width: 1280
+  height: 720
+  fps: 24
+  # 预设: 1080p(1920x1080), 720p(1280x720), 480p(854x480), short(1080x1920), square(1080x1080)
+  # 也可以在 CLI 用 --resolution 1080p 或 --resolution 1920x1080
 
 # ── Pipeline defaults ──────────────────────────────────────────────────────────
 log_level: INFO
