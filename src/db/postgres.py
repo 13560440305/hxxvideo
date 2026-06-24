@@ -264,6 +264,24 @@ class DatabaseManager:
                 )
                 return [dict(r) for r in cur.fetchall()]
 
+    # ── Phase 3: Web UI helpers ──────────────────────────────────────────
+
+    def get_project_scenes(self, project_id: int) -> list[dict]:
+        """Return all scenes for a project, ordered by scene_index."""
+        with self.get_conn() as conn:
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                cur.execute(
+                    "SELECT * FROM scenes WHERE project_id = %s ORDER BY scene_index",
+                    (project_id,),
+                )
+                return [dict(r) for r in cur.fetchall()]
+
+    def delete_project_cascaded(self, project_id: int) -> None:
+        """Delete a project and its cascaded scenes."""
+        with self.get_conn() as conn:
+            with conn.cursor() as cur:
+                cur.execute("DELETE FROM projects WHERE id = %s", (project_id,))
+
 
 # ---------------------------------------------------------------------------
 # Module‑level singleton

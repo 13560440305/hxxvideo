@@ -298,7 +298,9 @@ class PipelineOrchestrator:
         if not music_dir.is_dir():
             return None
 
-        files = sorted(music_dir.glob("*"))
+        # Only match audio files (skip README.md etc.)
+        AUDIO_EXTS = {".mp3", ".wav", ".flac", ".ogg", ".m4a", ".aac", ".wma"}
+        files = sorted(f for f in music_dir.iterdir() if f.suffix.lower() in AUDIO_EXTS)
         if not files:
             return None
 
